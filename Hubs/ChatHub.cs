@@ -17,13 +17,15 @@ namespace CSE325_Team12_Project.Hubs
         /// <summary>
         /// Send a message to a troupe (group chat)
         /// </summary>
-        public async Task SendTroupeMessage(string troupeId, string userId, string userName, string message)
+        public async Task SendTroupeMessage(string troupeId, string userId, string userName, string message, string? audioUrl = null)
         {
             // Save message to database
             var newMessage = new Message
             {
                 SenderId = Guid.Parse(userId),
                 Content = message,
+                Type = audioUrl != null ? MessageType.Audio : MessageType.Text,
+                AudioUrl = audioUrl,
                 TroupeId = Guid.Parse(troupeId),
                 CreatedAt = DateTime.UtcNow
             };

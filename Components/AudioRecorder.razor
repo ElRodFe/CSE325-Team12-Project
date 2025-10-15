@@ -1,0 +1,55 @@
+@inject IJSRuntime JS
+
+<div class="audio-recorder">
+    <button class="btn @(isRecording ? "btn-danger" : "btn-primary")" 
+            @onclick="ToggleRecording" disabled="@isUploading">
+        @if (isRecording)
+        {
+            <span>🔴 Stop Recording</span>
+        }
+        else
+        {
+            <span>🎤 Record Audio</span>
+        }
+    </button>
+    
+    @if (audioUrl != null)
+    {
+        <div class="mt-2">
+            <audio controls src="@audioUrl"></audio>
+            <button class="btn btn-success btn-sm ms-2" @onclick="SendAudio">Send</button>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnAudioSent { get; set; }
+    
+    private bool isRecording = false;
+    private bool isUploading = false;
+    private string? audioUrl;
+
+    private async Task ToggleRecording()
+    {
+        if (isRecording)
+        {
+            audioUrl = await JS.InvokeAsync<string>("stopRecording");
+            isRecording = false;
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("startRecording");
+            isRecording = true;
+            audioUrl = null;
+        }
+    }
+
+    private async Task SendAudio()
+    {
+        if (audioUrl != null)
+        {
+            await OnAudioSent.InvokeAsync(audioUrl);
+            audioUrl = null;
+        }
+    }
+}

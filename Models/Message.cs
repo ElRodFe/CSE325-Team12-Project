@@ -11,8 +11,12 @@ namespace CSE325_Team12_Project.Models
         [Required]
         public Guid SenderId { get; set; }
 
-        [Required, MaxLength(5000)]
+        [MaxLength(5000)]
         public string Content { get; set; } = string.Empty;
+
+        public MessageType Type { get; set; } = MessageType.Text;
+        public string? AudioUrl { get; set; }
+        public int? AudioDuration { get; set; } // in seconds
 
         public Guid? TroupeId { get; set; }
         public Guid? ConversationId { get; set; }
@@ -30,5 +34,12 @@ namespace CSE325_Team12_Project.Models
 
         [ForeignKey(nameof(ConversationId))]
         public virtual Conversation? Conversation { get; set; }
+    }
+
+    public enum MessageType
+    {
+        Text,
+        Audio,
+        Image
     }
 }
